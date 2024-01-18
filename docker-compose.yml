@@ -1,0 +1,45 @@
+version: '3'
+
+volumes:
+  support_postgres_data: {}
+
+networks:
+  supportnetwork:
+    driver: bridge
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: ./app/Dockerfile
+    env_file:
+      - ./.env
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app/app:/app
+    networks:
+      - supportnetwork
+    depends_on:
+      - postgres
+      - rabbitmq
+
+  postgres:
+    image: "postgres:15.4-alpine3.18"
+    env_file:
+      - ./.env
+    ports:
+      - "5432:5432"
+    volumes:
+      - support_postgres_data:/var/lib/postgresql/data
+    networks:
+      - supportnetwork
+
+  rabbitmq:
+    image: "rabbitmq:3.10.7-management"
+    container_name: "support_rabbitmq"
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - supportnetwork
