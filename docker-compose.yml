@@ -12,6 +12,7 @@ services:
     build:
       context: .
       dockerfile: ./app/Dockerfile
+    container_name: support_app
     env_file:
       - ./.env
     ports:
@@ -26,6 +27,7 @@ services:
 
   postgres:
     image: "postgres:15.4-alpine3.18"
+    container_name: support_postrgres
     env_file:
       - ./.env
     ports:
